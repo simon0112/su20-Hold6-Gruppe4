@@ -1,11 +1,16 @@
 using DIKUArcade;
 using DIKUArcade.Timers;
 using DIKUArcade.EventBus;
+// using DIKUArcade.Entities;
+// using DIKUArcade.Graphics;
+// using DIKUArcade.Math;
+// using System.IO;
+using System;
 
 
 public class Game : IGameEventProcessor<object>
 {
-    private Player player;
+    // private Player player;
     private Window win;
     private DIKUArcade.Timers.GameTimer gameTimer;
     public Game() {
@@ -14,9 +19,9 @@ public class Game : IGameEventProcessor<object>
         win = new Window("Main" , 500, 500);
         gameTimer = new GameTimer(60, 60);
 
-        player = new Player(
-            new DynamicShape(new Vec2F(0.45f, 0.1f), new Vec2F(0.1f, 0.1f)),
-            new Image(Path.Combine("Assets", "Images", "Player.png")));
+        // player = new Player(
+        //     new DynamicShape(new Vec2F(0.45f, 0.1f), new Vec2F(0.1f, 0.1f)),
+        //     new Image(Path.Combine("Assets", "Images", "Player.png")));
     }
     public void GameLoop() {
         while(win.IsRunning()) {
