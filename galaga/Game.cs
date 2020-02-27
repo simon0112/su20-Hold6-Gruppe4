@@ -1,4 +1,7 @@
 using DIKUArcade;
+using DIKUArcade.Timers;
+using DIKUArcade.EventBus;
+
 
 public class Game : IGameEventProcessor<object>
 {
@@ -37,5 +40,5 @@ public class Game : IGameEventProcessor<object>
     public void ProcessEvent(GameEventType eventType,
         GameEvent<object> gameEvent) {
         throw new NotImplementedException();
-    }
+}
 }
