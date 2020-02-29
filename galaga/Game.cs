@@ -72,7 +72,7 @@ public class Game : IGameEventProcessor<object>
                     GameEventFactory<object>.CreateGameEventForAllProcessors(
                     GameEventType.InputEvent, this, "KEY_LEFT", "", ""));
                     // rigrige syntakse for en vector som input
-                    player.Direction(new Vec2F(0.01f, 0.1f));
+                    player.Direction(new Vec2F(0.001f, 0.002f));
             break;
 
         /*
@@ -85,7 +85,7 @@ public class Game : IGameEventProcessor<object>
         }
     }
     public void KeyRelease(string key) {
-        player.Direction(new Vec2F(0.01f, 0.1f));
+        player.Direction(new Vec2F(0.0001f, 0.0001f));
     }
     public void ProcessEvent(GameEventType eventType,
         GameEvent<object> gameEvent) {
