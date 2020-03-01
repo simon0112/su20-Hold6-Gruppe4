@@ -20,9 +20,20 @@ public class Player : IGameEventProcessor<object>
         Entity.Shape.AsDynamicShape().ChangeDirection(dir);
 
     }
+    
     public void Move()
     {
-        Entity.Shape.Move();
+        if (Entity.Shape.Position.X > 0f && Entity.Shape.Position.X < 0.9f) 
+        {
+            Entity.Shape.Move();
+        } else if (Entity.Shape.Position.X <= 0f && Entity.Shape.AsDynamicShape().Direction.X > 0f) 
+        {
+            Entity.Shape.Move();
+        } else if (Entity.Shape.Position.X >= 0.9f && Entity.Shape.AsDynamicShape().Direction.X < 0f) 
+        {
+            Entity.Shape.Move();
+        }
     }
+
 }
    
