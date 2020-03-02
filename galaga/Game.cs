@@ -161,6 +161,7 @@ public class Game : IGameEventProcessor<object>
                 IterateShots();
                 eventBus.ProcessEvents();
                 player.Entity.RenderEntity();
+                explosions.RenderAnimations();
                 win.SwapBuffers();
             }
             if (gameTimer.ShouldReset()) {
