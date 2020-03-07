@@ -70,24 +70,22 @@ public class Game : IGameEventProcessor<object>
     }
     public void AddEnemies()
     {
-       Enemy enemy = new Enemy(
-         new DynamicShape(new Vec2F(0.43f, 0.88f), new Vec2F(0.1f, 0.1f)),
-         new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
-       enemies.Add(enemy);
-       enemy.Image = this.imageStride;
-       enemy = new Enemy(
-         new DynamicShape(new Vec2F(0.3f, 0.88f), new Vec2F(0.1f, 0.1f)),
-         new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
-       enemies.Add(enemy);
-       enemy.Image = this.imageStride;
-       enemy = new Enemy(
-         new DynamicShape(new Vec2F(0.56f, 0.88f), new Vec2F(0.1f, 0.1f)),
-         new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
-       enemies.Add(enemy);
-
-       enemy.Image = this.imageStride;
-
-    //    enemy.Image = this.imageStride2;
+        Enemy enemy;
+        enemy = new Enemy(
+          new DynamicShape(new Vec2F(0.43f, 0.88f), new Vec2F(0.1f, 0.1f)),
+          new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
+        enemies.Add(enemy);
+        enemy.Image = this.imageStride;
+        enemy = new Enemy(
+          new DynamicShape(new Vec2F(0.3f, 0.88f), new Vec2F(0.1f, 0.1f)),
+          new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
+        enemies.Add(enemy);
+        enemy.Image = this.imageStride;
+        enemy = new Enemy(
+          new DynamicShape(new Vec2F(0.56f, 0.88f), new Vec2F(0.1f, 0.1f)),
+          new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
+        enemies.Add(enemy);
+        enemy.Image = this.imageStride;
     }
     public void addShot()
     {
@@ -197,17 +195,18 @@ public class Game : IGameEventProcessor<object>
                     
             break;
 
-        /*
-            * TODO: Add cases that call player.Direction with a suitable direction.
-            * You can match on cases such as "KEY_UP", "KEY_1", "KEY_A", etc.
-            * Remember that the entire screen is 1.0f wide/tall, so choose a
-            * fittingly small number for the direction, e.g. (0.01f,0.0f).
-        */
-
         }
     }
     public void KeyRelease(string key) {
-        player.Direction(new Vec2F(0.0000f, 0.0000f));
+        switch (key) {
+            case "KEY_RIGHT":
+                player.Direction(new Vec2F(0f, 0f));
+                break;
+            case "KEY_LEFT":
+                player.Direction(new Vec2F(0f, 0f));
+                break;
+        }
+        
     }
     public void ProcessEvent(GameEventType eventType,
         GameEvent<object> gameEvent) {
