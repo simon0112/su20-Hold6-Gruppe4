@@ -11,11 +11,36 @@ public class Player : IGameEventProcessor<object>
     {
         Entity = new Entity(shape, image);
     }
-    public void ProcessEvent(GameEventType eventType,
-        GameEvent<object> gameEvent) {
-        throw new NotImplementedException();  
-    }
-    public void Direction(Vec2F dir)
+    public void ProcessEvent(GameEventType eventType, GameEvent<object> gameEvent) {
+        if (eventType == GameEventType.PlayerEvent) {
+            switch (gameEvent.Parameter1) {
+                case "KEY_PRESS":
+                    switch (gameEvent.Message) {
+                        case "KEY_LEFT":
+                            this.Direction(new Vec2F(-0.0060f, 0.0000f));
+                            break;
+                        case "KEY_RIGHT":
+                            this.Direction(new Vec2F(0.0060f, 0.0000f));
+                            break;
+                    }
+                    break;
+                case "KEY_RELEASE":
+                    switch (gameEvent.Message) {
+                        case "KEY_LEFT":
+                            this.Direction(new Vec2F(0f, 0f));
+                            break;
+                        case "KEY_RIGHT":
+                            this.Direction(new Vec2F(0f, 0f));
+                            break;
+                    }
+                    break;
+                }     
+            }    
+        }
+    
+
+
+    private void Direction(Vec2F dir)
     {
         Entity.Shape.AsDynamicShape().ChangeDirection(dir);
 
@@ -34,6 +59,5 @@ public class Player : IGameEventProcessor<object>
             Entity.Shape.Move();
         }
     }
-
 }
    

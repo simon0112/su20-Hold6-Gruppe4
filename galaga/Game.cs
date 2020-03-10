@@ -16,7 +16,6 @@ public class Game : IGameEventProcessor<object>
 {
     private Score score;
     private ImageStride imageStride;
-    private ImageStride imageStride2;
     private Window win;
     private Player player;
     private DIKUArcade.Timers.GameTimer gameTimer;
@@ -26,7 +25,7 @@ public class Game : IGameEventProcessor<object>
     public List<Enemy> enemies;
     private List<Image> explosionStrides;
     private AnimationContainer explosions;
-    private int explosionLength = 500;
+    private int explosionLength = 600;
 
     public Game() 
     {
@@ -43,10 +42,13 @@ public class Game : IGameEventProcessor<object>
             eventBus.InitializeEventBus(new List<GameEventType>() {
                 GameEventType.InputEvent, // key press / key release
                 GameEventType.WindowEvent, // messages to the window 
+                GameEventType.PlayerEvent,
+                GameEventType.StatusEvent,
                 });
         win.RegisterEventBus(eventBus);
         eventBus.Subscribe(GameEventType.InputEvent, this);
         eventBus.Subscribe(GameEventType.WindowEvent, this);
+        eventBus.Subscribe(GameEventType.PlayerEvent, player);
 
         // Look at the file and consider why we place the number '4' here.
         enemyStrides = ImageStride.CreateStrides(4,
@@ -54,8 +56,6 @@ public class Game : IGameEventProcessor<object>
         enemies = new List<Enemy>();
         
         imageStride = new ImageStride(80, enemyStrides);
-
-        // imageStride2 = new ImageStride(60, explosionStrides);
 
         playerShots = new List<PlayerShot>();
 
@@ -103,41 +103,43 @@ public class Game : IGameEventProcessor<object>
     }
     
     public void IterateShots() {
-        foreach (var shot in playerShots) 
-        {
+        PlayerShot DeletedShot = null;
+        foreach (var shot in playerShots) {
             shot.Shape.Move();
-            if (shot.Shape.Position.Y > 1.0f) 
-            {
+            if (shot.Shape.Position.Y > 1.0f) {
                 shot.DeleteEntity();
-            } else 
-            {
+                DeletedShot = shot;
+            } else {
                 int i = 1;
                 Enemy enemyDelete = null;
-                foreach (var enemy in enemies) 
-                {
+                foreach (var enemy in enemies) {
                     i++;
-                    if (CollisionDetection.Aabb(shot.Entity.Shape.AsDynamicShape(), enemy.Shape).Collision == true)
-                    {
+                    if (CollisionDetection.Aabb(shot.Entity.Shape.AsDynamicShape(), enemy.Shape).Collision == true) {
                         score.AddPoint();
                         enemyDelete = enemy;
+                        DeletedShot = shot;
                         AddExplosion(enemy.Shape.Position.X, enemy.Shape.Position.Y, enemy.Shape.Extent.X, enemy.Shape.Extent.Y);
                         explosions.RenderAnimations();
                         shot.DeleteEntity();
                         enemy.DeleteEntity();
 
                     }
-            }
-            if (enemyDelete != null)
-            {
-                enemyDelete.DeleteEntity();
-                enemyDelete.RenderEntity();
-                enemies.Remove(enemyDelete);
+                }
+                if (enemyDelete != null) {
+                    enemyDelete.DeleteEntity();
+                    enemyDelete.RenderEntity();
+                    enemies.Remove(enemyDelete);
 
+                }
+                shot.RenderEntity();
             }
-            shot.RenderEntity();
+        }
+        if (DeletedShot != null) {
+            DeletedShot.DeleteEntity();
+            DeletedShot.RenderEntity();
+            playerShots.Remove(DeletedShot);
         }
     }
-}
     public void GameLoop() {
         while(win.IsRunning()) {
             gameTimer.MeasureTime();
@@ -177,15 +179,13 @@ public class Game : IGameEventProcessor<object>
                 break;
             case "KEY_LEFT":
                 eventBus.RegisterEvent(
-                    GameEventFactory<object>.CreateGameEventForAllProcessors(
-                    GameEventType.InputEvent, this, "KEY_LEFT", "", ""));
-                    player.Direction(new Vec2F(-0.0060f, 0.0000f));
+                    GameEventFactory<object>.CreateGameEventForSpecificProcessor(
+                    GameEventType.PlayerEvent, this, player, "KEY_LEFT", "KEY_PRESS", ""));
             break;
             case "KEY_RIGHT":
                 eventBus.RegisterEvent(
-                    GameEventFactory<object>.CreateGameEventForAllProcessors(
-                    GameEventType.InputEvent, this, "KEY_RIGHT", "", ""));
-                    player.Direction(new Vec2F(0.0060f, 0.0000f));
+                    GameEventFactory<object>.CreateGameEventForSpecificProcessor(
+                    GameEventType.PlayerEvent, this, player, "KEY_RIGHT", "KEY_PRESS", ""));
             break;
             case "KEY_SPACE":
                 eventBus.RegisterEvent(
@@ -200,10 +200,14 @@ public class Game : IGameEventProcessor<object>
     public void KeyRelease(string key) {
         switch (key) {
             case "KEY_RIGHT":
-                player.Direction(new Vec2F(0f, 0f));
+                eventBus.RegisterEvent(
+                    GameEventFactory<object>.CreateGameEventForSpecificProcessor(
+                    GameEventType.PlayerEvent, this, player, "KEY_RIGHT", "KEY_RELEASE", ""));
                 break;
             case "KEY_LEFT":
-                player.Direction(new Vec2F(0f, 0f));
+                eventBus.RegisterEvent(
+                    GameEventFactory<object>.CreateGameEventForSpecificProcessor(
+                    GameEventType.PlayerEvent, this, player, "KEY_LEFT", "KEY_RELEASE", ""));
                 break;
         }
         
@@ -227,7 +231,15 @@ public class Game : IGameEventProcessor<object>
                     KeyRelease(gameEvent.Message);
                     break;
             }     
+        } else if (eventType == GameEventType.InputEvent) {
+            switch (gameEvent.Parameter1) {
+                case "KEY_PRESS":
+                   KeyPress(gameEvent.Message);
+                   break;
+                case "KEY_RELEASE":
+                    KeyRelease(gameEvent.Message);
+                    break;
+            }
         }
     }
-
 }

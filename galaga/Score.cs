@@ -11,22 +11,31 @@ using DIKUArcade.Physics;
 
 public class Score
 {
-    private int score;
-    private Text display;
-    public Score(Vec2F position, Vec2F extent) 
-    {
-       score = 0;
-       display = new Text(score.ToString(), position, extent);
-    }
-    public void AddPoint()
-    {
-       score++;
-    }
-    public void RenderScore() 
-    {
-       display.SetText(string.Format("Score: {0}", score.ToString()));
-       display.SetColor(new Vec3I(255, 0, 0));
-       display.RenderText();
-    }
-
+   private int score;
+   private Text display;
+   public Score(Vec2F position, Vec2F extent) 
+   {
+      score = 0;
+      display = new Text(score.ToString(), position, extent);
+   }
+   public void AddPoint()
+   {
+      score++;
+   }
+   public void RenderScore() 
+   {
+      display.SetText(string.Format("Score: {0}", score.ToString()));
+      display.SetColor(new Vec3I(255, 0, 0));
+      display.RenderText();
+   }
+/* **** CANT REALLY FIGURE OUT HOW TO MAKE THIS WORK ATM ****
+   public void ProcessEvent(GameEventType eventType, GameEvent<object> gameEvent) {
+      if (eventType == GameEventType.StatusEvent) {
+         switch (gameEvent.Message) {
+            case "AddPoint":
+               this.AddPoint();
+               break;
+         }
+      }
+   }*/
 }
