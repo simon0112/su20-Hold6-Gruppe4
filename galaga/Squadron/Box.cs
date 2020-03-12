@@ -10,9 +10,9 @@ using System.Collections.Generic;
 using DIKUArcade.Physics;
 
 namespace galaga.Squadron {
-    public class Square : ISquadron
+    public class Box : ISquadron
     {
-        public Square(int Diff) 
+        public Box(int Diff) 
         {
             switch (Diff) {
                 case 0:
@@ -56,20 +56,24 @@ namespace galaga.Squadron {
                 case 2:
                     for (float x = (0.9f/3f); x <= ((0.9f/3f)+(2f*0.13f)); x += 0.13f) {
                         for (float y = 0.9f; y >= (0.9f - (2f*0.13f)); y -= 0.13f) {
-                            enemy = new Enemy(
-                                new DynamicShape(new Vec2F(x, y), new Vec2F(0.1f, 0.1f)),
-                                new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
-                            Enemies.AddDynamicEntity(enemy);
+                            if (x < 0.35f || x > 0.5f || y > 0.8f || y < 0.7f) {
+                                enemy = new Enemy(
+                                    new DynamicShape(new Vec2F(x, y), new Vec2F(0.1f, 0.1f)),
+                                    new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
+                                Enemies.AddDynamicEntity(enemy);
+                            }
                         }
                     }
                     break;
                 case 3:
                     for (float x = (0.95f/4f); x <= ((0.95f/4f) + (3f*0.13f)); x += 0.13f) {
                         for (float y = 0.9f; y >= (0.9f - (3f*0.13f)); y -= 0.13f) {
-                            enemy = new Enemy(
-                                new DynamicShape(new Vec2F(x, y), new Vec2F(0.1f, 0.1f)),
-                                new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
-                            Enemies.AddDynamicEntity(enemy);
+                            if (x < 0.35f || x > 0.5f || y > 0.8f || y < 0.6f) {
+                                enemy = new Enemy(
+                                    new DynamicShape(new Vec2F(x, y), new Vec2F(0.1f, 0.1f)),
+                                    new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
+                                Enemies.AddDynamicEntity(enemy);
+                            }
                         }
                     }
                     break;

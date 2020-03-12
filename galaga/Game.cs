@@ -8,6 +8,7 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using DIKUArcade.Physics;
+using galaga.Squadron;
 
 
 
@@ -27,7 +28,9 @@ public class Game : IGameEventProcessor<object>
     private AnimationContainer explosions;
     private int explosionLength = 500;
     private TimedEvent EnemyRes = new TimedEvent(TimeSpanType.Seconds, 2, "Explosion_Done");
-    
+    private Square squarePlace = new Square(2);
+    private Box boxPlace = new Box(3);
+    private Rectangle RectPlace = new Rectangle(1);
 
     public Game() 
     {
@@ -66,38 +69,18 @@ public class Game : IGameEventProcessor<object>
             Path.Combine("Assets", "Images", "Explosion.png"));
         explosions = new AnimationContainer(explosionLength);
 
-        score = new Score(new Vec2F(0.02f, 0.65f), new Vec2F(0.3f, 0.3f));
+        score = new Score(new Vec2F(0.4f, -0.25f), new Vec2F(0.3f, 0.3f));
 
         AddEnemies();
  
     }
     public void AddEnemies()
     {
-        Enemy enemy;
-
-        for (float i = 0.3f; i <= 0.56f; i += 0.13f) {
-            enemy = new Enemy(
-                new DynamicShape(new Vec2F(i, 0.88f), new Vec2F(0.1f, 0.1f)),
-                new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
+        RectPlace.CreateEnemies(enemyStrides);
+        foreach (Enemy enemy in RectPlace.Enemies) {
             enemies.Add(enemy);
             enemy.Image = this.imageStride;
         }
-        /*
-        enemy = new Enemy(
-          new DynamicShape(new Vec2F(0.43f, 0.88f), new Vec2F(0.1f, 0.1f)),
-          new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
-        enemies.Add(enemy);
-        enemy.Image = this.imageStride;
-        enemy = new Enemy(
-          new DynamicShape(new Vec2F(0.3f, 0.88f), new Vec2F(0.1f, 0.1f)),
-          new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
-        enemies.Add(enemy);
-        enemy.Image = this.imageStride;
-        enemy = new Enemy(
-          new DynamicShape(new Vec2F(0.56f, 0.88f), new Vec2F(0.1f, 0.1f)),
-          new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
-        enemies.Add(enemy);
-        enemy.Image = this.imageStride;*/
     }
     public void addShot()
     {

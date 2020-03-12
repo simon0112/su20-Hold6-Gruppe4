@@ -28,14 +28,4 @@ public class Score
       display.SetColor(new Vec3I(255, 0, 0));
       display.RenderText();
    }
-/* **** CANT REALLY FIGURE OUT HOW TO MAKE THIS WORK ATM ****
-   public void ProcessEvent(GameEventType eventType, GameEvent<object> gameEvent) {
-      if (eventType == GameEventType.StatusEvent) {
-         switch (gameEvent.Message) {
-            case "AddPoint":
-               this.AddPoint();
-               break;
-         }
-      }
-   }*/
 }
