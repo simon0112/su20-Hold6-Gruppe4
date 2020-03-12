@@ -25,7 +25,8 @@ public class Game : IGameEventProcessor<object>
     public List<Enemy> enemies;
     private List<Image> explosionStrides;
     private AnimationContainer explosions;
-    private int explosionLength = 600;
+    private int explosionLength = 500;
+    private TimedEvent EnemyRes = new TimedEvent(TimeSpanType.Seconds, 2, "Explosion_Done");
     
 
     public Game() 
@@ -61,18 +62,27 @@ public class Game : IGameEventProcessor<object>
 
         playerShots = new List<PlayerShot>();
 
-        AddEnemies();
-
         explosionStrides = ImageStride.CreateStrides(4,
             Path.Combine("Assets", "Images", "Explosion.png"));
         explosions = new AnimationContainer(explosionLength);
 
         score = new Score(new Vec2F(0.02f, 0.65f), new Vec2F(0.3f, 0.3f));
+
+        AddEnemies();
  
     }
     public void AddEnemies()
     {
         Enemy enemy;
+
+        for (float i = 0.3f; i <= 0.56f; i += 0.13f) {
+            enemy = new Enemy(
+                new DynamicShape(new Vec2F(i, 0.88f), new Vec2F(0.1f, 0.1f)),
+                new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
+            enemies.Add(enemy);
+            enemy.Image = this.imageStride;
+        }
+        /*
         enemy = new Enemy(
           new DynamicShape(new Vec2F(0.43f, 0.88f), new Vec2F(0.1f, 0.1f)),
           new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
@@ -87,7 +97,7 @@ public class Game : IGameEventProcessor<object>
           new DynamicShape(new Vec2F(0.56f, 0.88f), new Vec2F(0.1f, 0.1f)),
           new Image(Path.Combine("Assets", "Images", "BlueMonster.png")));
         enemies.Add(enemy);
-        enemy.Image = this.imageStride;
+        enemy.Image = this.imageStride;*/
     }
     public void addShot()
     {
@@ -102,6 +112,17 @@ public class Game : IGameEventProcessor<object>
         explosions.AddAnimation(
         new StationaryShape(posX, posY, extentX, extentY), explosionLength,
         new ImageStride(explosionLength / 8, explosionStrides));
+    }
+
+    public void CheckEnemy() {
+        if (enemies.Count == 0) {
+            while (EnemyRes.HasExpired()) {
+                AddEnemies();
+                EnemyRes.ResetTimer();
+            }
+        } else {
+            EnemyRes.ResetTimer();
+        }
     }
     
     public void IterateShots() {
@@ -149,6 +170,7 @@ public class Game : IGameEventProcessor<object>
                 win.PollEvents();
                 // Update game logic here
                 player.Move();
+                CheckEnemy();
             }
             
 
@@ -183,17 +205,20 @@ public class Game : IGameEventProcessor<object>
                 eventBus.RegisterEvent(
                     GameEventFactory<object>.CreateGameEventForSpecificProcessor(
                     GameEventType.PlayerEvent, this, player, "KEY_LEFT", "KEY_PRESS", ""));
+                    CheckEnemy();
             break;
             case "KEY_RIGHT":
                 eventBus.RegisterEvent(
                     GameEventFactory<object>.CreateGameEventForSpecificProcessor(
                     GameEventType.PlayerEvent, this, player, "KEY_RIGHT", "KEY_PRESS", ""));
+                    CheckEnemy();
             break;
             case "KEY_SPACE":
                 eventBus.RegisterEvent(
                     GameEventFactory<object>.CreateGameEventForAllProcessors(
                     GameEventType.InputEvent, this, "KEY_SPACE", "", ""));
                     addShot();
+                    CheckEnemy();
                     
             break;
 

@@ -7,6 +7,7 @@ namespace galaga.MovementStrategy {
             foreach (Enemy enemy in enemyList) {
                 enemy.Shape.AsDynamicShape().Direction.Y = speed;
             }
+            MoveEnemies(enemyList);
         }
         public void MoveEnemy(Enemy enemy) {
             enemy.Shape.Move();
