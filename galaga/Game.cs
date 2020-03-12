@@ -26,9 +26,11 @@ public class Game : IGameEventProcessor<object>
     private List<Image> explosionStrides;
     private AnimationContainer explosions;
     private int explosionLength = 600;
+    
 
     public Game() 
     {
+        
         // TODO: Choose some reasonable values for the window and timer constructor.
         // For the window, we recommend a 500x500 resolution (a 1:1 aspect ratio).
         win = new Window("Main" , 500, 500);
