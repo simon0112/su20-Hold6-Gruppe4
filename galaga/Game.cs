@@ -28,9 +28,13 @@ public class Game : IGameEventProcessor<object>
     private AnimationContainer explosions;
     private int explosionLength = 500;
     private TimedEvent EnemyRes = new TimedEvent(TimeSpanType.Seconds, 2, "Explosion_Done");
-    private Square squarePlace = new Square(2);
-    private Box boxPlace = new Box(3);
-    private Rectangle RectPlace = new Rectangle(1);
+    private int SquareDifficulty = 0;
+    private int BoxDifficulty = 0;
+    private int RectDifficulty = 0;
+    private Square squarePlace;
+    private Box boxPlace;
+    private Rectangle RectPlace;
+    private string prevSquad;
 
     public Game() 
     {
@@ -76,12 +80,52 @@ public class Game : IGameEventProcessor<object>
     }
     public void AddEnemies()
     {
-        RectPlace.CreateEnemies(enemyStrides);
-        foreach (Enemy enemy in RectPlace.Enemies) {
-            enemies.Add(enemy);
-            enemy.Image = this.imageStride;
+        switch (prevSquad) {
+            case "Square":
+                boxPlace = new Box(BoxDifficulty);
+
+                boxPlace.CreateEnemies(enemyStrides);
+                foreach (Enemy enemy in boxPlace.Enemies) {
+                    enemies.Add(enemy);
+                    enemy.Image = this.imageStride;
+                }
+
+                BoxDifficulty++;
+                prevSquad = "Box";
+                break;
+            case "Box":
+                RectPlace = new Rectangle(RectDifficulty);
+
+                RectPlace.CreateEnemies(enemyStrides);
+                foreach (Enemy enemy in RectPlace.Enemies) {
+                    enemies.Add(enemy);
+                    enemy.Image = this.imageStride;
+                }
+
+                RectDifficulty++;
+                prevSquad = "Rectangle";
+
+                break;
+            case "Rectangle":
+                squarePlace = new Square(SquareDifficulty);
+
+                squarePlace.CreateEnemies(enemyStrides);
+                foreach (Enemy enemy in squarePlace.Enemies) {
+                    enemies.Add(enemy);
+                    enemy.Image = this.imageStride;
+                }
+
+                SquareDifficulty++;
+                prevSquad = "Square";
+                break;
+            default:
+                prevSquad = "Square";
+                break;
         }
     }
+
+    // PLANNED PLACEMENT OF IMPLEMENTATION OF MOVEMENT STRATEGIES, CURRENTLY TOO CLOSE TO DEADLINE TO BE ABLE TO FIX RENDERING ISSUES WHEN USING MOVEMENT STRATEGIES
+
     public void addShot()
     {
        PlayerShot playerShot = new PlayerShot(

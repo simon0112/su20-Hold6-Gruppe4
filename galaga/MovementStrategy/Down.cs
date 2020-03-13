@@ -3,9 +3,9 @@ using DIKUArcade.Entities;
 namespace galaga.MovementStrategy {
     public class Down : IMovementStrategy {
         
-        public Down(EntityContainer<Enemy> enemyList, float speed) {
+        public Down(EntityContainer<Enemy> enemyList) {
             foreach (Enemy enemy in enemyList) {
-                enemy.Shape.AsDynamicShape().Direction.Y = speed;
+                enemy.Shape.AsDynamicShape().Direction.Y = -0.06f;
             }
             MoveEnemies(enemyList);
         }
