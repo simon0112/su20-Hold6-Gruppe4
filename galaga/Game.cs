@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using DIKUArcade.Physics;
 using galaga.Squadron;
+using galaga.MovementStrategy;
 
 
 
@@ -35,6 +36,7 @@ public class Game : IGameEventProcessor<object>
     private Box boxPlace;
     private Rectangle RectPlace;
     private string prevSquad;
+    private ZigZagDown TestMove = new ZigZagDown();
 
     public Game() 
     {
@@ -84,6 +86,7 @@ public class Game : IGameEventProcessor<object>
             case "Square":
                 boxPlace = new Box(BoxDifficulty);
 
+
                 boxPlace.CreateEnemies(enemyStrides);
                 foreach (Enemy enemy in boxPlace.Enemies) {
                     enemies.Add(enemy);
@@ -125,7 +128,12 @@ public class Game : IGameEventProcessor<object>
     }
 
     // PLANNED PLACEMENT OF IMPLEMENTATION OF MOVEMENT STRATEGIES, CURRENTLY TOO CLOSE TO DEADLINE TO BE ABLE TO FIX RENDERING ISSUES WHEN USING MOVEMENT STRATEGIES
-
+    public void MoveEnemy(List<Enemy> EnemyList) {
+        foreach (Enemy enemy in EnemyList) {
+            TestMove.MoveEnemy(enemy);
+        }
+    }
+    
     public void addShot()
     {
        PlayerShot playerShot = new PlayerShot(
@@ -162,7 +170,7 @@ public class Game : IGameEventProcessor<object>
             } else {
                 int i = 1;
                 Enemy enemyDelete = null;
-                foreach (var enemy in enemies) {
+                foreach (var enemy in this.enemies) {
                     i++;
                     if (CollisionDetection.Aabb(shot.Entity.Shape.AsDynamicShape(), enemy.Shape).Collision == true) {
                         score.AddPoint();
@@ -197,6 +205,7 @@ public class Game : IGameEventProcessor<object>
                 win.PollEvents();
                 // Update game logic here
                 player.Move();
+                MoveEnemy(this.enemies);
                 CheckEnemy();
             }
             
