@@ -39,7 +39,6 @@ public class Game : IGameEventProcessor<object>
     private ZigZagDown ZigZagMove = new ZigZagDown(0f);
     private Down DownMove = new Down(0f);
     private NoMove noMove = new NoMove();
-    private Text GameOverText;
     private bool GameOverActive = false;
     private int Pattern = 0;
 
@@ -81,8 +80,6 @@ public class Game : IGameEventProcessor<object>
         explosions = new AnimationContainer(explosionLength);
 
         score = new Score(new Vec2F(0.4f, -0.25f), new Vec2F(0.3f, 0.3f));
-
-        GameOverText = new Text("GAME OVER, RESTART PROGRAM TO TRY AGAIN", new Vec2F(0.45f,0.45f), new Vec2F(0.5f,0.5f));
 
         AddEnemies();
  
@@ -188,8 +185,15 @@ public class Game : IGameEventProcessor<object>
         } else {
             EnemyRes.ResetTimer();
         }
+
+        foreach (Enemy enemy in this.enemies) {
+            if (enemy.Shape.Position.Y <= 0f) {
+                GameOverActive = true;
+            }
+        }
     }
     public void GameOver() {
+
         GameOverActive = true;
     }
     
@@ -235,31 +239,35 @@ public class Game : IGameEventProcessor<object>
         while(win.IsRunning()) {
             gameTimer.MeasureTime();
             while (gameTimer.ShouldUpdate()) {
-                win.PollEvents();
-                // Update game logic here
-                player.Move();
-                MoveEnemy(this.enemies);
-                CheckEnemy();
+                if (!GameOverActive) {
+                    win.PollEvents();
+                    // Update game logic here
+                    player.Move();
+                    MoveEnemy(this.enemies);
+                    CheckEnemy();
+                }
             }
             
 
             if (gameTimer.ShouldRender()) {
                 win.Clear();
-                // Render gameplay entities here
-                score.RenderScore();
-                foreach (Enemy enemy in this.enemies)
-                {
-                    enemy.RenderEntity();
-                }
-                IterateShots();
-                eventBus.ProcessEvents();
-                player.Entity.RenderEntity();
-                explosions.RenderAnimations();
-                win.SwapBuffers();
                 if (GameOverActive) {
-                    win.Clear();
-                    GameOverText.RenderText();
+                    // Render score only
+                    score.RenderScore();
+                    win.SwapBuffers();
                     
+                } else {
+                    // Render gameplay entities here
+                    score.RenderScore();
+                    foreach (Enemy enemy in this.enemies)
+                    {
+                        enemy.RenderEntity();
+                    }
+                    IterateShots();
+                    eventBus.ProcessEvents();
+                    player.Entity.RenderEntity();
+                    explosions.RenderAnimations();
+                    win.SwapBuffers();
                 }
             }
             if (gameTimer.ShouldReset()) {
@@ -279,20 +287,17 @@ public class Game : IGameEventProcessor<object>
                 eventBus.RegisterEvent(
                     GameEventFactory<object>.CreateGameEventForSpecificProcessor(
                     GameEventType.PlayerEvent, this, player, "KEY_LEFT", "KEY_PRESS", ""));
-                    CheckEnemy();
             break;
             case "KEY_RIGHT":
                 eventBus.RegisterEvent(
                     GameEventFactory<object>.CreateGameEventForSpecificProcessor(
                     GameEventType.PlayerEvent, this, player, "KEY_RIGHT", "KEY_PRESS", ""));
-                    CheckEnemy();
             break;
             case "KEY_SPACE":
                 eventBus.RegisterEvent(
                     GameEventFactory<object>.CreateGameEventForAllProcessors(
                     GameEventType.InputEvent, this, "KEY_SPACE", "", ""));
                     addShot();
-                    CheckEnemy();
                     
             break;
 
