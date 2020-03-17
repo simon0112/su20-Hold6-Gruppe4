@@ -12,10 +12,9 @@ using galaga.Squadron;
 using galaga.MovementStrategy;
 
 
-
-
 public class Game : IGameEventProcessor<object>
 {
+    private Random rand = new Random();
     private Score score;
     private ImageStride imageStride;
     private Window win;
@@ -36,7 +35,13 @@ public class Game : IGameEventProcessor<object>
     private Box boxPlace;
     private Rectangle RectPlace;
     private string prevSquad;
-    private ZigZagDown TestMove = new ZigZagDown();
+    private float SpdDiff;
+    private ZigZagDown ZigZagMove = new ZigZagDown(0f);
+    private Down DownMove = new Down(0f);
+    private NoMove noMove = new NoMove();
+    private Text GameOverText;
+    private bool GameOverActive = false;
+    private int Pattern = 0;
 
     public Game() 
     {
@@ -77,6 +82,8 @@ public class Game : IGameEventProcessor<object>
 
         score = new Score(new Vec2F(0.4f, -0.25f), new Vec2F(0.3f, 0.3f));
 
+        GameOverText = new Text("GAME OVER, RESTART PROGRAM TO TRY AGAIN", new Vec2F(0.45f,0.45f), new Vec2F(0.5f,0.5f));
+
         AddEnemies();
  
     }
@@ -94,6 +101,7 @@ public class Game : IGameEventProcessor<object>
                 }
 
                 BoxDifficulty++;
+                SpdDiff += 0.0005f;
                 prevSquad = "Box";
                 break;
             case "Box":
@@ -106,6 +114,7 @@ public class Game : IGameEventProcessor<object>
                 }
 
                 RectDifficulty++;
+                SpdDiff += 0.0005f;
                 prevSquad = "Rectangle";
 
                 break;
@@ -119,6 +128,7 @@ public class Game : IGameEventProcessor<object>
                 }
 
                 SquareDifficulty++;
+                SpdDiff += 0.0005f;
                 prevSquad = "Square";
                 break;
             default:
@@ -129,8 +139,24 @@ public class Game : IGameEventProcessor<object>
 
     // PLANNED PLACEMENT OF IMPLEMENTATION OF MOVEMENT STRATEGIES, CURRENTLY TOO CLOSE TO DEADLINE TO BE ABLE TO FIX RENDERING ISSUES WHEN USING MOVEMENT STRATEGIES
     public void MoveEnemy(List<Enemy> EnemyList) {
-        foreach (Enemy enemy in EnemyList) {
-            TestMove.MoveEnemy(enemy);
+        switch (Pattern) {
+            case 0:
+                ZigZagMove.spd = SpdDiff;
+                foreach (Enemy enemy in EnemyList) {
+                    ZigZagMove.MoveEnemy(enemy);
+                }
+                break;
+            case 1:
+                DownMove.spd = SpdDiff;
+                foreach (Enemy enemy in EnemyList) {
+                    DownMove.MoveEnemy(enemy);
+                }
+                break;
+            case 2:
+                foreach (Enemy enemy in EnemyList) {
+                    noMove.MoveEnemy(enemy);
+                }
+                break;
         }
     }
     
@@ -148,16 +174,23 @@ public class Game : IGameEventProcessor<object>
         new StationaryShape(posX, posY, extentX, extentY), explosionLength,
         new ImageStride(explosionLength / 8, explosionStrides));
     }
+    public void NewPattern() {
+        Pattern = rand.Next(3);
+    }
 
     public void CheckEnemy() {
-        if (enemies.Count == 0) {
-            while (EnemyRes.HasExpired()) {
+        if (this.enemies.Count == 0) {
+            NewPattern();
+            if (EnemyRes.HasExpired()) {
                 AddEnemies();
                 EnemyRes.ResetTimer();
             }
         } else {
             EnemyRes.ResetTimer();
         }
+    }
+    public void GameOver() {
+        GameOverActive = true;
     }
     
     public void IterateShots() {
@@ -223,6 +256,11 @@ public class Game : IGameEventProcessor<object>
                 player.Entity.RenderEntity();
                 explosions.RenderAnimations();
                 win.SwapBuffers();
+                if (GameOverActive) {
+                    win.Clear();
+                    GameOverText.RenderText();
+                    
+                }
             }
             if (gameTimer.ShouldReset()) {
                 // 1 second has passed - display last captured ups and fps
