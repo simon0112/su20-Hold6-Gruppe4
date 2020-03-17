@@ -134,8 +134,7 @@ public class Game : IGameEventProcessor<object>
         }
     }
 
-    // PLANNED PLACEMENT OF IMPLEMENTATION OF MOVEMENT STRATEGIES, CURRENTLY TOO CLOSE TO DEADLINE TO BE ABLE TO FIX RENDERING ISSUES WHEN USING MOVEMENT STRATEGIES
-    public void MoveEnemy(List<Enemy> EnemyList) {
+public void MoveEnemy(List<Enemy> EnemyList) {
         switch (Pattern) {
             case 0:
                 ZigZagMove.spd = SpdDiff;
@@ -193,7 +192,6 @@ public class Game : IGameEventProcessor<object>
         }
     }
     public void GameOver() {
-
         GameOverActive = true;
     }
     
