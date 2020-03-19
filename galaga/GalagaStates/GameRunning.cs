@@ -236,7 +236,15 @@ namespace galaga.GalagaStates {
 
         public void HandleKeyEvent(string keyValue, string keyAction) {
             if (keyAction == "KEY_PRESS") {
-                KeyPress(keyValue);
+                if (keyValue == "KEY_ESCAPE") {
+                    GameEventFactory<object>.CreateGameEventForAllProcessors(
+                            GameEventType.GameStateEvent,
+                            this,
+                            "CHANGE_STATE",
+                            "GAME_PAUSED", "");
+                } else {
+                    KeyPress(keyValue);
+                }
             } else if (keyAction == "KEY_RELEASE") {
                 KeyRelease(keyValue);
             }
@@ -244,11 +252,6 @@ namespace galaga.GalagaStates {
 
         private void KeyPress(string key) {
             switch(key) {
-                case "KEY_ESCAPE":
-                    eventBus.RegisterEvent(
-                        GameEventFactory<object>.CreateGameEventForAllProcessors(
-                        GameEventType.WindowEvent, this, "CLOSE_WINDOW", "", ""));
-                    break;
                 case "KEY_LEFT":
                     eventBus.RegisterEvent(
                         GameEventFactory<object>.CreateGameEventForSpecificProcessor(
