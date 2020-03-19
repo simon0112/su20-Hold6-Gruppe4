@@ -22,8 +22,7 @@ public class Game : IGameEventProcessor<object>
     private GameEventBus<object> eventBus;
 
     public Game() 
-    {
-        
+    {  
         // TODO: Choose some reasonable values for the window and timer constructor.
         // For the window, we recommend a 500x500 resolution (a 1:1 aspect ratio).
         win = new Window("Main" , 500, 500);
@@ -38,6 +37,7 @@ public class Game : IGameEventProcessor<object>
  
     }
     public void GameLoop() {
+        StateMachine stateMachine = new StateMachine(); 
         while (win.IsRunning()) {
             gameTimer.MeasureTime();
             while (gameTimer.ShouldUpdate()) {
