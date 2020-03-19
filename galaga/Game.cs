@@ -20,6 +20,7 @@ public class Game : IGameEventProcessor<object>
     private Window win;
     private DIKUArcade.Timers.GameTimer gameTimer;
     private GameEventBus<object> eventBus;
+    private StateMachine stateMachine;
 
     public Game() 
     {  
@@ -29,11 +30,20 @@ public class Game : IGameEventProcessor<object>
         gameTimer = new GameTimer(60, 60);
 
         eventBus = galaga.GalagaBus.GetBus();
+        eventBus.InitializeEventBus(new List<GameEventType>() {
+            GameEventType.InputEvent,
+            GameEventType.WindowEvent,
+            GameEventType.GameStateEvent,
+        });
         win.RegisterEventBus(eventBus);
         eventBus.Subscribe(GameEventType.InputEvent, this);
         eventBus.Subscribe(GameEventType.WindowEvent, this);
+        eventBus.Subscribe(GameEventType.GameStateEvent, this);
+        stateMachine = new StateMachine();
 
-        // Look at the file and consider why we place the number '4' here.
+        galaga.GalagaStates.MainMenu.GetInstance().InitializeGameState();
+        galaga.GalagaStates.GamePaused.GetInstance().InitializeGameState();
+        galaga.GalagaStates.GameRunning.GetInstance().InitializeGameState();
  
     }
     public void GameLoop() {

@@ -56,7 +56,6 @@ namespace galaga.GalagaStates {
 
         public void RenderState() {
             backGroundImage.RenderEntity();
-
             if (activeMenuButton == 0) {
                 menuButtons[0].SetColor(new Vec3F(1f,0f,0f));
                 menuButtons[1].SetColor(new Vec3F(0.5f,0.5f,0f));
