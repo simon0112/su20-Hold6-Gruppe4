@@ -295,6 +295,9 @@ namespace galaga.GalagaStates {
                 {
                     enemy.RenderEntity();
                 }
+                foreach (PlayerShot shot in this.playerShots) {
+                    shot.RenderEntity();
+                }
                 player.Entity.RenderEntity();
                 explosions.RenderAnimations();
             }
