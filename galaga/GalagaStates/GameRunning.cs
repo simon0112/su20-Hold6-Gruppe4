@@ -40,6 +40,7 @@ namespace galaga.GalagaStates {
         private int Pattern = 0;
         private Score score;
         private GameEventBus<object> eventBus;
+        public bool HasShot = false;
 
         public static GameRunning GetInstance() {
             return GameRunning.instance ?? (GameRunning.instance = new GameRunning());
@@ -152,8 +153,10 @@ namespace galaga.GalagaStates {
             PlayerShot playerShot = new PlayerShot(
                 new DynamicShape(new Vec2F(player.Entity.Shape.Position.X + 0.045f, 0.2f), new Vec2F(0.008f, 0.027f)), 
                 new Image(Path.Combine("Assets", "Images", "BulletRed2.png")));
-        
-            playerShots.Add(playerShot);
+            if (!HasShot) {
+                playerShots.Add(playerShot);
+                HasShot = true;
+            }
         }
         private void AddExplosion(float posX, float posY, float extentX, float extentY) 
         {
@@ -231,6 +234,7 @@ namespace galaga.GalagaStates {
                 MoveEnemy(this.enemies);
                 IterateShots();
                 CheckEnemy();
+                HasShot = false;
             }
         }
 
