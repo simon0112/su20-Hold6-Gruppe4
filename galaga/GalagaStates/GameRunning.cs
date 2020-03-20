@@ -23,7 +23,7 @@ namespace galaga.GalagaStates {
         public List<Enemy> enemies;
         private List<Image> explosionStrides;
         private AnimationContainer explosions;
-        private int explosionLength = 500;
+        private int explosionLength = 800;
         private TimedEvent EnemyRes = new TimedEvent(TimeSpanType.Seconds, 2, "Explosion_Done");
         private int SquareDifficulty = 0;
         private int BoxDifficulty = 0;
@@ -148,13 +148,12 @@ namespace galaga.GalagaStates {
             }
         }
         
-        public void addShot()
-        {
-        PlayerShot playerShot = new PlayerShot(
-        new DynamicShape(new Vec2F(player.Entity.Shape.Position.X + 0.045f, 0.2f), new Vec2F(0.008f, 0.027f)), 
-        new Image(Path.Combine("Assets", "Images", "BulletRed2.png")));
+        public void addShot() {
+            PlayerShot playerShot = new PlayerShot(
+                new DynamicShape(new Vec2F(player.Entity.Shape.Position.X + 0.045f, 0.2f), new Vec2F(0.008f, 0.027f)), 
+                new Image(Path.Combine("Assets", "Images", "BulletRed2.png")));
         
-        playerShots.Add(playerShot);
+            playerShots.Add(playerShot);
         }
         private void AddExplosion(float posX, float posY, float extentX, float extentY) 
         {
@@ -230,6 +229,7 @@ namespace galaga.GalagaStates {
             if (!GameOverActive) {
                 player.Move();
                 MoveEnemy(this.enemies);
+                IterateShots();
                 CheckEnemy();
             }
         }
@@ -237,11 +237,12 @@ namespace galaga.GalagaStates {
         public void HandleKeyEvent(string keyValue, string keyAction) {
             if (keyAction == "KEY_PRESS") {
                 if (keyValue == "KEY_ESCAPE") {
-                    GameEventFactory<object>.CreateGameEventForAllProcessors(
-                            GameEventType.GameStateEvent,
-                            this,
-                            "CHANGE_STATE",
-                            "GAME_PAUSED", "");
+                    galaga.GalagaBus.GetBus().RegisterEvent(
+                        GameEventFactory<object>.CreateGameEventForAllProcessors(
+                                GameEventType.GameStateEvent,
+                                this,
+                                "CHANGE_STATE",
+                                "GAME_PAUSED", ""));
                 } else {
                     KeyPress(keyValue);
                 }
@@ -294,7 +295,6 @@ namespace galaga.GalagaStates {
                 {
                     enemy.RenderEntity();
                 }
-                IterateShots();
                 player.Entity.RenderEntity();
                 explosions.RenderAnimations();
             }

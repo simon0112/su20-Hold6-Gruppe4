@@ -10,7 +10,6 @@ namespace galaga.GalagaStates {
         private static MainMenu instance = null;
         private Entity backGroundImage;
         private Text[] menuButtons;
-        private int maxMenuButtons;
         private int activeMenuButton = 0;
         public static MainMenu GetInstance() {
             return MainMenu.instance ?? (MainMenu.instance = new MainMenu());
@@ -21,10 +20,10 @@ namespace galaga.GalagaStates {
         }
 
         public void InitializeGameState() {
-            menuButtons = new Text[2] {new Text("- New Game", new Vec2F(0.45f,0.5f), new Vec2F(0.1f,0.1f)), new Text("- Quit", new Vec2F(0.45f,0.3f), new Vec2F(0.1f,0.1f))};
+            menuButtons = new Text[2] {new Text("- New Game", new Vec2F(0.35f,0.5f), new Vec2F(0.5f,0.4f)), new Text("- Quit", new Vec2F(0.35f,0.0f), new Vec2F(0.5f,0.4f))};
 
             backGroundImage = new Entity(
-                new DynamicShape(new Vec2F(0.43f, 0.1f), new Vec2F(0.1f, 0.1f)),
+                new DynamicShape(new Vec2F(0f, 0f), new Vec2F(1f, 1f)),
                 new Image(Path.Combine("Assets", "Images", "TitleImage.png")));
         }
 
@@ -40,14 +39,16 @@ namespace galaga.GalagaStates {
                     activeMenuButton = 1;
                 } else if (keyValue == "KEY_ENTER") {
                     if (activeMenuButton == 0) {
-                        GameEventFactory<object>.CreateGameEventForAllProcessors(
-                            GameEventType.GameStateEvent,
-                            this,
-                            "CHANGE_STATE",
-                            "GAME_RUNNING", "");
+                        galaga.GalagaBus.GetBus().RegisterEvent(
+                            GameEventFactory<object>.CreateGameEventForAllProcessors(
+                                GameEventType.GameStateEvent,
+                                this,
+                                "CHANGE_STATE",
+                                "GAME_RUNNING", ""));
                     } else if (activeMenuButton == 1) {
-                        GameEventFactory<object>.CreateGameEventForAllProcessors(
-                            GameEventType.WindowEvent, this, "CLOSE_WINDOW", "", "");
+                        galaga.GalagaBus.GetBus().RegisterEvent(
+                            GameEventFactory<object>.CreateGameEventForAllProcessors(
+                                GameEventType.WindowEvent, this, "CLOSE_WINDOW", "", ""));
                     }
                 }
             }
@@ -67,6 +68,5 @@ namespace galaga.GalagaStates {
                 text.RenderText();
             }
         }
-    
     }
 }

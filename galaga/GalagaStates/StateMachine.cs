@@ -40,6 +40,8 @@ namespace galaga.GalagaStates {
                             break;
                     }
                 }
+            } else if (eventType == GameEventType.InputEvent) {
+                this.ActiveState.HandleKeyEvent(gameEvent.Message, gameEvent.Parameter1);
             }
         }
         

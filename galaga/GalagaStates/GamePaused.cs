@@ -10,7 +10,6 @@ namespace galaga.GalagaStates {
         private static GamePaused instance = null;
         private Entity backGroundImage;
         private Text[] menuButtons;
-        private int maxMenuButtons;
         private int activeMenuButton = 0;
         public static GamePaused GetInstance() {
             return GamePaused.instance ?? (GamePaused.instance = new GamePaused());
@@ -21,10 +20,10 @@ namespace galaga.GalagaStates {
         }
 
         public void InitializeGameState() {
-            menuButtons = new Text[2] {new Text("- Continue", new Vec2F(0.45f,0.5f), new Vec2F(0.1f,0.1f)), new Text("- Main Menu", new Vec2F(0.45f,0.3f), new Vec2F(0.1f,0.1f))};
+            menuButtons = new Text[2] {new Text("- Continue", new Vec2F(0.35f,0.5f), new Vec2F(0.5f,0.4f)), new Text("- Main Menu", new Vec2F(0.35f,0.0f), new Vec2F(0.5f,0.4f))};
 
             backGroundImage = new Entity(
-                new DynamicShape(new Vec2F(0.43f, 0.1f), new Vec2F(0.1f, 0.1f)),
+                new DynamicShape(new Vec2F(0f, 0f), new Vec2F(1f, 1f)),
                 new Image(Path.Combine("Assets", "Images", "SpaceBackground.png")));
         }
 
@@ -40,17 +39,19 @@ namespace galaga.GalagaStates {
                     activeMenuButton = 1;
                 } else if (keyValue == "KEY_ENTER") {
                     if (activeMenuButton == 0) {
-                        GameEventFactory<object>.CreateGameEventForAllProcessors(
-                            GameEventType.GameStateEvent,
-                            this,
-                            "CHANGE_STATE",
-                            "GAME_RUNNING", "");
+                        galaga.GalagaBus.GetBus().RegisterEvent(
+                            GameEventFactory<object>.CreateGameEventForAllProcessors(
+                                GameEventType.GameStateEvent,
+                                this,
+                                "CHANGE_STATE",
+                                "GAME_RUNNING", ""));
                     } else if (activeMenuButton == 1) {
-                        GameEventFactory<object>.CreateGameEventForAllProcessors(
-                            GameEventType.GameStateEvent,
-                            this,
-                            "CHANGE_STATE",
-                            "MAIN_MENU", "");
+                        galaga.GalagaBus.GetBus().RegisterEvent(
+                            GameEventFactory<object>.CreateGameEventForAllProcessors(
+                                GameEventType.GameStateEvent,
+                                this,
+                                "CHANGE_STATE",
+                                "MAIN_MENU", ""));
                     }
                 }
             }
@@ -59,11 +60,16 @@ namespace galaga.GalagaStates {
 
         public void RenderState() {
             backGroundImage.RenderEntity();
-
+            if (activeMenuButton == 0) {
+                menuButtons[0].SetColor(new Vec3F(1f,0f,0f));
+                menuButtons[1].SetColor(new Vec3F(0.5f,0.5f,0f));
+            } else if (activeMenuButton == 1) {
+                menuButtons[1].SetColor(new Vec3F(1,0,0));
+                menuButtons[0].SetColor(new Vec3F(0.5f,0.5f,0f));
+            }
             foreach (Text text in menuButtons) {
                 text.RenderText();
             }
         }
-    
     }
 }

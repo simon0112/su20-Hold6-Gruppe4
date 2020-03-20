@@ -34,6 +34,7 @@ public class Game : IGameEventProcessor<object>
             GameEventType.InputEvent,
             GameEventType.WindowEvent,
             GameEventType.GameStateEvent,
+            GameEventType.PlayerEvent,
         });
         win.RegisterEventBus(eventBus);
         eventBus.Subscribe(GameEventType.InputEvent, this);
